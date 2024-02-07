@@ -1,13 +1,14 @@
 const express = require('express')
 const argon2 = require('argon2')
+const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser')
+const { validUser } = require('./middleware/auth')
+const database = require('./database')
 const app = express()
-
-const database = [
-    {id: 1, username: 'abc', password: 'abc'}
-]
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+app.use(cookieParser())
 
 app.get('/test', function (req, res) {
   res.send('test')
@@ -15,6 +16,10 @@ app.get('/test', function (req, res) {
 
 app.get('/user', (req, res) => {
     res.send(database)
+})
+
+app.get('/secure_data', validUser, (req, res) => {
+    res.send('인증된 사용자만 쓸 수 있는 API')
 })
 
 app.post('/signup', async (req, res) => {
@@ -40,6 +45,11 @@ app.post('/login', async (req, res) => {
         return
     }
 
+    const access_token = jwt.sign({ username }, 'secure')
+    console.log(access_token)
+    res.cookie('access_token', access_token, {
+        httpOnly: true,
+    })
     res.send('로그인 성공.')
 })
 

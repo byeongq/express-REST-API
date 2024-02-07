@@ -114,3 +114,6 @@ app.post('/login', async (req, res) => {
 ```
  1. argon2 암호화 async를 콜백 함수 전에 넣어준다.
  2. `await argon2.verify(<big long hash, "password")` 사용해 암호화 끼리 값을 비교해 맞으면 true 아닐시 false를 반환한다.
+ ---
+ jsonwebtoken
+ cookie-parser
